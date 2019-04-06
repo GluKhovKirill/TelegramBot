@@ -92,7 +92,7 @@ class MathExecutor:
         try:
             first = float(first)
             second = float(second)
-            return (True, (first + second))
+            return (True, round(first + second, 8))
         except ValueError:
             return (False, "NFLT")
         except TypeError:
@@ -106,7 +106,7 @@ class MathExecutor:
         try:
             first = float(first)
             second = float(second)
-            return (True, (first - second))
+            return (True, round(first - second, 8))
         except ValueError:
             return (False, "NFLT")
         except TypeError:
@@ -120,7 +120,7 @@ class MathExecutor:
         try:
             first = float(first)
             second = float(second)
-            return (True, first * second)
+            return (True, round(first * second, 8))
         except ValueError:
             return (False, "NFLT")
         except TypeError:
@@ -133,7 +133,7 @@ class MathExecutor:
         # Частное (<first> / <second>)
         try:
             first, second = float(first), float(second)
-            return (True, first / second)
+            return (True, round(first / second, 8))
         except ValueError:
             return (False, "NFLT")
         except TypeError:
@@ -162,7 +162,7 @@ class MathExecutor:
     def raise_to_a_power(self, number, degree, *nothing):
         # Возведение в степень (<number>^<degree>)
         try:
-            return (True, float(number) ** float(degree))
+            return (True, round(float(number) ** float(degree), 8))
         except ValueError:
             return (False, "NFLT")
         except TypeError:
@@ -175,9 +175,9 @@ class MathExecutor:
         # Извлечение квадратного корня
         try:
             number = float(number)
-            if number < 0:
+            if(number < 0):
                 return False
-            return (True, number ** 0.5)
+            return (True, round(number ** 0.5, 8))
         except ValueError:
             return (False, "NFLT")
         except TypeError:
@@ -286,9 +286,7 @@ class MathExecutor:
             except TypeError:
                 return (False, "NONE")  
             except BaseException:
-                return (False, "ERR")                    
-            
-            
+                return (False, "ERR") 
         if radians:
             return (True, math.tan(radians))
         return (True, radians)
@@ -297,7 +295,7 @@ class MathExecutor:
     def cotangent(self, radians, nothing, is_degree=False):
         tng = self.tangent(radians, nothing, is_degree)
         if tng[0]:
-            return (True, round(1/tng[1], 8))
+            return (True, 1 / tng[1])
         return tng
     
     
