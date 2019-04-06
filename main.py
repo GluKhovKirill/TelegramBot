@@ -83,17 +83,14 @@ if(__name__ == '__main__'):
     
     
     reply_keyboard = [['/count', '/translate'],
-                      ['/start', '/close']] #Buttons  
+                      ['/start', '/close']]
     
     
+    #Buttons
     MARKUP = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=False)
     MIN_MARKUP = ReplyKeyboardMarkup([["/start"]], one_time_keyboard=False)
     STOP_MARKUP = ReplyKeyboardMarkup([["/stop"]], one_time_keyboard=False)
-    
-    
     response, key = get_key("telegram-bot")
-    
-    
     if(response):
         print("My name: @SupremeSmartBot")
         main(key)
