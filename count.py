@@ -297,7 +297,7 @@ class MathExecutor:
     def cotangent(self, radians, nothing, is_degree=False):
         tng = self.tangent(radians, nothing, is_degree)
         if tng[0]:
-            return (True, 1/tng[1])
+            return (True, round(1/tng[1], 8))
         return tng
     
     
@@ -321,7 +321,7 @@ class MathExecutor:
         # Корень кубический
         try:
             number = float(number)
-            return (True, math.round(number ** (1/3), 8))
+            return (True, round(number ** (1/3), 8))
         except ValueError:
             return (False, "NFLT")
         except TypeError:
@@ -333,7 +333,7 @@ class MathExecutor:
     def one_div_x(self, number, *nothing):
         # Вычисление 1/x
         try:
-            return (True, math.round(1 / float(number), 8))
+            return (True, round(1 / float(number), 8))
         except ValueError:
             return (False, "NFLT")
         except TypeError:
@@ -355,7 +355,7 @@ class MathExecutor:
             number = float(number)
             perc = number * 100
             perc = str(perc) + "%"
-            return (True, math.round(perc, 8))
+            return (True, round(perc, 8))
         except ValueError:
             return (False, "NFLT")
         except TypeError:
@@ -369,7 +369,7 @@ class MathExecutor:
         try:
             perc = float(perc.replace("%", ""))
             num = perc / 100
-            return (True, math.round(num, 8))
+            return (True, round(num, 8))
         except ValueError:
             return (False, "NFLT")
         except TypeError:
