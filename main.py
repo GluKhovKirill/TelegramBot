@@ -63,13 +63,10 @@ def main(token):
     dp.add_handler(CommandHandler("start", start)) #Greeting
     dp.add_handler(CommandHandler("close", close_keyboard))
     dp.add_handler(translate_handler)
-    
-    
     '''
     text_handler = MessageHandler(Filters.text, echo)
     dp.add_handler(text_handler)
     '''
-    
     print("STARTED")
     logging.info("Bot started")
     updater.start_polling()
@@ -80,8 +77,6 @@ def main(token):
 if(__name__ == '__main__'):
     FEATURES = ["1)Переводить фразы c русского на английский и наоборот! (/translate)",
                 "2)Считать за тебя! (/count)"]
-    
-    
     reply_keyboard = [['/count', '/translate'],
                       ['/start', '/close']]
     
