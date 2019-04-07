@@ -2,20 +2,34 @@
 # -*- coding: utf-8 -*-
 import logging
 from telegram.ext import Updater, MessageHandler, Filters, CommandHandler, ConversationHandler
-from telegram import ReplyKeyboardMarkup #, ReplyKeyboardRemove
+from telegram import ReplyKeyboardMarkup #, Bot #, ReplyKeyboardRemove
 from keys import get_key
 from translator import analyze_and_translate
+import sys
 
 
 logging.basicConfig(level=logging.INFO, filename="TelegramBot.log",
                     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s') #TODO: level=loging.INFO
 
 
-def get_info(update):
-    msg = update['message']
-    ans = {"chat": msg['chat'], 
-           "text": msg['text'], 
-           "from": msg['from_user']}
+def get_info(update, write_log=True):
+    msg = update.message
+    ans = {"chat": msg.chat, 
+           "text": msg.text, 
+           "from": msg.from_user,
+           "id": msg.from_user['id']}
+    nickname = ans['chat'].username
+    ans['nickname'] = nickname
+    if nickname:
+        nickname = " @"+nickname
+    else:
+        nickname = ""
+    user = "USER: <"+ans['from'].first_name +" "+ans['from'].last_name
+    user += nickname+" ("+str(ans['id']) + ")>"
+    data = user+" SENT: <"+ans['text']+">"
+    ans['beaut_info'] = data
+    if write_log:
+        logging.info(data)
     return ans
     
     
@@ -25,6 +39,8 @@ def close_keyboard(bot, update):
     
     
 def start(bot, update):
+    print("D",type(bot), type(update), update)
+    #bot.send_message(chat_id=bot.message.chat_id, text="HI")
     info = get_info(update)
     print(info['chat'],info['text'],info['from'])
 
@@ -47,9 +63,22 @@ def translate(bot, update):
     pass
 
 
-def translate_stop (bot, update):
+def translate_stop(bot, update):
     update.message.reply_text("Выход из режима переводчика!", reply_markup=MARKUP)
     return ConversationHandler.END
+
+
+def get_log(bot, update):
+    user = get_info(update)
+    if user['id'] in MASTERS_IDS:
+        update.message.reply_text("Лови!")
+        update.message.reply_document(open("TelegramBot.log", 'rb'))
+        
+    else:
+        bot.sendMessage(chat_id=MASTERS_IDS[0], text="Попытка получить лог!")
+        bot.sendMessage(chat_id=MASTERS_IDS[0], text=user['beaut_info'])
+        update.message.reply_text("У вас нет доступа к этому!")
+    pass
 
 
 def main(token):
@@ -67,6 +96,7 @@ def main(token):
     #Features:
     dp.add_handler(CommandHandler("start", start)) #Greeting
     dp.add_handler(CommandHandler("close", close_keyboard))
+    dp.add_handler(CommandHandler("get_log", get_log))
     dp.add_handler(translate_handler)
     '''
     text_handler = MessageHandler(Filters.text, echo)
@@ -81,6 +111,7 @@ def main(token):
 
 
 if __name__ == '__main__':
+    MASTERS_IDS = [403054226, 265801498]
     FEATURES = ["1)Переводить фразы c русского на английский и наоборот! (/translate)",
                 "2)Считать за тебя! (/count)"]
     
