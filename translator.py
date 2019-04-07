@@ -1,5 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+
+
 import requests
 from keys import get_key
 
@@ -23,9 +25,12 @@ def translate(text, lang):
     except BaseException:
         pass
     return ERR_PHRASE
-
+  
+  
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+
+
 def get_lang(text, hint="en,ru"):
     url = "https://translate.yandex.net/api/v1.5/tr.json/detect"
     params = {'key': KEY,
@@ -41,10 +46,10 @@ def get_lang(text, hint="en,ru"):
     except BaseException:
         pass
     return (False, None)
-
-
+  
+  
 def analyze_and_translate(text):
     lang = get_lang(text)
-    if lang[0]:
+    if(lang[0]):
         return translate(text, lang)
     return ERR_PHRASE
