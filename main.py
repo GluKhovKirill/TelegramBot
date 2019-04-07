@@ -116,7 +116,8 @@ if __name__ == '__main__':
                 "2)Считать за тебя! (/count)"]
     
     reply_keyboard = [['/count', '/translate'],
-                      ['/start', '/close']] #Buttons    
+                      ['/start', '/close'],
+                      ["/get_log"]] #Buttons    
     MARKUP = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=False)
     MIN_MARKUP = ReplyKeyboardMarkup([["/start"]], one_time_keyboard=False)
     STOP_MARKUP = ReplyKeyboardMarkup([["/stop"]], one_time_keyboard=False)
