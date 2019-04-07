@@ -1,7 +1,5 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-
-
 import logging
 from telegram.ext import Updater, MessageHandler, Filters, CommandHandler, ConversationHandler
 from telegram import ReplyKeyboardMarkup #, ReplyKeyboardRemove
@@ -9,17 +7,27 @@ from keys import get_key
 from translator import analyze_and_translate
 
 
-logging.basicConfig(level=logging.DEBUG, filename="TelegramBot.log",
+logging.basicConfig(level=logging.INFO, filename="TelegramBot.log",
                     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s') #TODO: level=loging.INFO
 
 
+def get_info(update):
+    msg = update['message']
+    ans = {"chat": msg['chat'], 
+           "text": msg['text'], 
+           "from": msg['from_user']}
+    return ans
+    
+    
 def close_keyboard(bot, update):
     update.message.reply_text("Ok", reply_markup=MIN_MARKUP)
     pass
-  
-  
+    
+    
 def start(bot, update):
-    print(bot, update) #TODO: remove
+    info = get_info(update)
+    print(info['chat'],info['text'],info['from'])
+
     greeting = "Привет! Я - крутой бот, который может тебе помочь! Посмтори, что я умею:\n"
     greeting += "\n".join(FEATURES)
     update.message.reply_text(greeting, reply_markup=MARKUP)
@@ -48,7 +56,6 @@ def main(token):
     updater = Updater(token)
     dp = updater.dispatcher
     
-    
     #Conv. handlers:
     translate_handler = ConversationHandler(
         entry_points=[CommandHandler("translate", translate_start)],
@@ -56,9 +63,7 @@ def main(token):
             1: [MessageHandler(Filters.text, translate)]
         },
         fallbacks=[CommandHandler('stop', translate_stop)]
-    )
-    
-    
+    )    
     #Features:
     dp.add_handler(CommandHandler("start", start)) #Greeting
     dp.add_handler(CommandHandler("close", close_keyboard))
@@ -67,6 +72,7 @@ def main(token):
     text_handler = MessageHandler(Filters.text, echo)
     dp.add_handler(text_handler)
     '''
+    
     print("STARTED")
     logging.info("Bot started")
     updater.start_polling()
@@ -74,19 +80,18 @@ def main(token):
     pass
 
 
-if(__name__ == '__main__'):
+if __name__ == '__main__':
     FEATURES = ["1)Переводить фразы c русского на английский и наоборот! (/translate)",
                 "2)Считать за тебя! (/count)"]
+    
     reply_keyboard = [['/count', '/translate'],
-                      ['/start', '/close']]
-    
-    
-    #Buttons
+                      ['/start', '/close']] #Buttons    
     MARKUP = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=False)
     MIN_MARKUP = ReplyKeyboardMarkup([["/start"]], one_time_keyboard=False)
     STOP_MARKUP = ReplyKeyboardMarkup([["/stop"]], one_time_keyboard=False)
+    
     response, key = get_key("telegram-bot")
-    if(response):
+    if response:
         print("My name: @SupremeSmartBot")
         main(key)
     else: 
