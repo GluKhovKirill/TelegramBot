@@ -44,14 +44,14 @@ def start(bot, update):
     info = get_info(update)
     print(info['chat'],info['text'],info['from'])
 
-    greeting = "Привет! Я - крутой бот, который может тебе помочь! Посмтори, что я умею:\n"
+    greeting = "Привет! Я - крутой бот, который может тебе помочь! Посмотри, что я умею:\n"
     greeting += "\n".join(FEATURES)
     update.message.reply_text(greeting, reply_markup=MARKUP)
     pass
 
 
 def translate_start(bot, update):
-    text = "Переход в режим переводчика!\nЕсли написать мне фразу на русском - я переведу "
+    text = "Переход в режим переводчика!\nЕсли написать мне фразу на русском, я переведу "
     text += "её на английский и наоборот.\nДля выхода используйте /stop"
     update.message.reply_text(text, reply_markup=STOP_MARKUP)
     return 1
