@@ -1,7 +1,5 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-
-
 from json import loads
 
 
@@ -20,7 +18,7 @@ def get_key(keyname):
         return keys
     
     
-if(__name__ == "__main__):
+if __name__ == "__main__":
     print("Available keys:")
     for key in keys[1].keys():
         print("KEYNAME:", key)
