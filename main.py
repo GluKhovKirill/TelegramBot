@@ -7,17 +7,27 @@ from keys import get_key
 from translator import analyze_and_translate
 
 
-logging.basicConfig(level=logging.DEBUG, filename="TelegramBot.log",
+logging.basicConfig(level=logging.INFO, filename="TelegramBot.log",
                     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s') #TODO: level=loging.INFO
 
 
+def get_info(update):
+    msg = update['message']
+    ans = {"chat": msg['chat'], 
+           "text": msg['text'], 
+           "from": msg['from_user']}
+    return ans
+    
+    
 def close_keyboard(bot, update):
     update.message.reply_text("Ok", reply_markup=MIN_MARKUP)
     pass
     
     
 def start(bot, update):
-    print(bot, update) #TODO: remove
+    info = get_info(update)
+    print(info['chat'],info['text'],info['from'])
+
     greeting = "Привет! Я - крутой бот, который может тебе помочь! Посмтори, что я умею:\n"
     greeting += "\n".join(FEATURES)
     update.message.reply_text(greeting, reply_markup=MARKUP)
