@@ -5,7 +5,7 @@ from telegram.ext import Updater, MessageHandler, Filters, CommandHandler, Conve
 from telegram import ReplyKeyboardMarkup #, Bot #, ReplyKeyboardRemove
 from keys import get_key
 from translator import TheTranslator
-import sys
+from count import MathExecutor
 
 
 logging.basicConfig(level=logging.INFO, filename="TelegramBot.log",
@@ -59,7 +59,7 @@ def start(bot, update):
 
 def translate_start(bot, update):
     get_info(update)
-    text = "Переход в режим переводчика!\nЕсли написать мне фразу на русском - я переведу "
+    text = "Переход в режим переводчика!\nЕсли написать мне фразу на русском, я переведу "
     text += "её на английский и наоборот.\nДля выхода используйте /stop"
     update.message.reply_text(text, reply_markup=STOP_MARKUP)
     return 1
@@ -92,6 +92,29 @@ def get_log(bot, update):
     pass
 
 
+def count_start(bot, update):
+    get_info(update)
+    text = "Переход в режим вычислителя!\nНапишите мне пример, и я его вычислю"
+    text += "\n(Не больше 1 операнда за раз!)\n(И, пожалуйста, отделяйте числа от операндов пробелами)"
+    update.message.reply_text(text, reply_markup=STOP_MARKUP)
+    return 1
+
+
+def count(bot, update):
+    user = get_info(update, "COUNT_REQ")['user']
+    data = update.message.text.split()
+    answer = MathExecutor(data[0], data[1], data[2]).execute()
+    logging.info('TRANSLATOR_ANS TO '+user+': '+answer)
+    update.message.reply_text(answer)    
+    pass
+
+
+def count_stop(bot, update):
+    get_info(update)
+    update.message.reply_text("Выход из режима вычислителя!", reply_markup=MARKUP)
+    return ConversationHandler.END    
+
+
 def main(token):
     updater = Updater(token)
     dp = updater.dispatcher
@@ -104,11 +127,20 @@ def main(token):
         },
         fallbacks=[CommandHandler('stop', translate_stop)]
     )    
+    
+    calc_handler = ConversationHandler(
+        entry_points=[CommandHandler("count", count_start)],
+        states={
+            1: [MessageHandler(Filters.text, count)]
+        },
+        fallbacks=[CommandHandler('stop', count_stop)]
+    )        
     #Features:
     dp.add_handler(CommandHandler("start", start)) #Greeting
     dp.add_handler(CommandHandler("close", close_keyboard))
     dp.add_handler(CommandHandler("get_log", get_log))
     dp.add_handler(translate_handler)
+    dp.add_handler(calc_handler)
     '''
     text_handler = MessageHandler(Filters.text, echo)
     dp.add_handler(text_handler)
