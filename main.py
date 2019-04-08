@@ -103,8 +103,12 @@ def count_start(bot, update):
 def count(bot, update):
     user = get_info(update, "COUNT_REQ")['user']
     data = update.message.text.split()
+    if 'pi' in data: 
+        data[1] = 'pi'
+    if 'e' in data:
+        data[1] = 'e'
     answer = MathExecutor(data[0], data[1], data[2]).execute()
-    logging.info('TRANSLATOR_ANS TO '+user+': '+answer)
+    logging.info('COUNT_ANS TO '+user+': '+answer)
     update.message.reply_text(answer)    
     pass
 
