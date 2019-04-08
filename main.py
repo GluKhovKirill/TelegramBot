@@ -6,6 +6,7 @@ from telegram import ReplyKeyboardMarkup #, Bot #, ReplyKeyboardRemove
 from keys import get_key
 from translator import TheTranslator
 from count import MathExecutor
+from bash import get_quote
 
 
 logging.basicConfig(level=logging.INFO, filename="TelegramBot.log",
@@ -117,6 +118,14 @@ def count_stop(bot, update):
     return ConversationHandler.END    
 
 
+def bash_quote(bot, update):
+    user = get_info(update, "QUOTE_REQ")['user']
+    answer = get_quote()
+    logging.info('QUOTE_ANS TO '+user+': '+answer)
+    update.message.reply_text(answer)  
+    pass
+
+
 def main(token):
     updater = Updater(token)
     dp = updater.dispatcher
@@ -141,6 +150,7 @@ def main(token):
     dp.add_handler(CommandHandler("start", start)) #Greeting
     dp.add_handler(CommandHandler("close", close_keyboard))
     dp.add_handler(CommandHandler("get_log", get_log))
+    dp.add_handler(CommandHandler("random_quote", bash_quote))
     dp.add_handler(translate_handler)
     dp.add_handler(calc_handler)
     
@@ -158,7 +168,7 @@ if __name__ == '__main__':
     
     reply_keyboard = [['/count', '/translate'],
                       ['/start', '/close'],
-                      ["/get_log"]] #Buttons    
+                      ["/get_log", "/random_quote"]] #Buttons    
     MARKUP = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=False)
     MIN_MARKUP = ReplyKeyboardMarkup([["/start"]], one_time_keyboard=False)
     STOP_MARKUP = ReplyKeyboardMarkup([["/stop"]], one_time_keyboard=False)
