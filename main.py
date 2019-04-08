@@ -12,7 +12,7 @@ logging.basicConfig(level=logging.INFO, filename="TelegramBot.log",
                     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s') #TODO: level=loging.INFO
 
 
-def get_info(update, write_log=True):
+def get_info(update, data="SENT", write_log=True):
     msg = update.message
     ans = {"chat": msg.chat, 
            "text": msg.text, 
@@ -24,9 +24,15 @@ def get_info(update, write_log=True):
         nickname = " @"+nickname
     else:
         nickname = ""
-    user = "USER: <"+ans['from'].first_name +" "+ans['from'].last_name
-    user += nickname+" ("+str(ans['id']) + ")>"
-    data = user+" SENT: <"+ans['text']+">"
+    user = ""
+    if ans['from'].first_name:
+        user += ans['from'].first_name
+    if ans['from'].last_name:
+        user += " "+ans['from'].last_name
+    user = "USER: <"+user+" "+nickname
+    user += " ("+str(ans['id']) + ")>"
+    ans['user'] = user
+    data = user+": <"+ans['text']+">"
     ans['beaut_info'] = data
     if write_log:
         logging.info(data)
@@ -34,6 +40,7 @@ def get_info(update, write_log=True):
     
     
 def close_keyboard(bot, update):
+    get_info(update)
     update.message.reply_text("Ok", reply_markup=MIN_MARKUP)
     pass
     
@@ -51,6 +58,7 @@ def start(bot, update):
 
 
 def translate_start(bot, update):
+    get_info(update)
     text = "Переход в режим переводчика!\nЕсли написать мне фразу на русском - я переведу "
     text += "её на английский и наоборот.\nДля выхода используйте /stop"
     update.message.reply_text(text, reply_markup=STOP_MARKUP)
@@ -58,12 +66,15 @@ def translate_start(bot, update):
 
 
 def translate(bot, update):
+    user = get_info(update, "TRANSLATOR_REQ")['user']
     answer = analyze_and_translate(update.message.text)
+    logging.info('TRANSLATOR_ANS TO '+user+': '+answer)
     update.message.reply_text(answer)
     pass
 
 
 def translate_stop(bot, update):
+    get_info(update)
     update.message.reply_text("Выход из режима переводчика!", reply_markup=MARKUP)
     return ConversationHandler.END
 
