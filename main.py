@@ -46,8 +46,6 @@ def close_keyboard(bot, update):
     
     
 def start(bot, update):
-    print("D",type(bot), type(update), update)
-    #bot.send_message(chat_id=bot.message.chat_id, text="HI")
     info = get_info(update)
     print(info['chat'],info['text'],info['from'])
 
@@ -145,10 +143,6 @@ def main(token):
     dp.add_handler(CommandHandler("get_log", get_log))
     dp.add_handler(translate_handler)
     dp.add_handler(calc_handler)
-    '''
-    text_handler = MessageHandler(Filters.text, echo)
-    dp.add_handler(text_handler)
-    '''
     
     print("STARTED")
     logging.info("Bot started")
