@@ -4,7 +4,7 @@ import logging
 from telegram.ext import Updater, MessageHandler, Filters, CommandHandler, ConversationHandler
 from telegram import ReplyKeyboardMarkup #, Bot #, ReplyKeyboardRemove
 from keys import get_key
-from translator import analyze_and_translate
+from translator import TheTranslator
 import sys
 
 
@@ -51,7 +51,7 @@ def start(bot, update):
     info = get_info(update)
     print(info['chat'],info['text'],info['from'])
 
-    greeting = "Привет! Я - крутой бот, который может тебе помочь! Посмтори, что я умею:\n"
+    greeting = "Привет! Я - крутой бот, который может тебе помочь! Посмотри, что я умею:\n"
     greeting += "\n".join(FEATURES)
     update.message.reply_text(greeting, reply_markup=MARKUP)
     pass
@@ -67,7 +67,7 @@ def translate_start(bot, update):
 
 def translate(bot, update):
     user = get_info(update, "TRANSLATOR_REQ")['user']
-    answer = analyze_and_translate(update.message.text)
+    answer = translator.analyze_and_translate(update.message.text)
     logging.info('TRANSLATOR_ANS TO '+user+': '+answer)
     update.message.reply_text(answer)
     pass
@@ -135,6 +135,7 @@ if __name__ == '__main__':
     
     response, key = get_key("telegram-bot")
     if response:
+        translator = TheTranslator()
         print("My name: @SupremeSmartBot")
         main(key)
     else: 
