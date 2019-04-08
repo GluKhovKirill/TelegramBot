@@ -5,7 +5,7 @@ from decimal import Decimal
 
 
 class MathExecutor:
-    def __init__(self, first, operand, second, is_degree):
+    def __init__(self, first, operand, second, is_degree=True):
         self.error_codes = {"ERR" : "Что-то пошло не так!",
                             "NONE": "Не передан необходимый операнд",
                             "NFLT": "Операнд не является числом",
