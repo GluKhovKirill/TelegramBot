@@ -109,7 +109,7 @@ class MathExecutor:
         try:
             first = float(first)
             second = float(second)
-            return (True, round(first - second, 8))
+            return (True, Decimal(str(first)) + Decimal(str(second)))
         except ValueError:
             return (False, "NFLT")
         except TypeError:
