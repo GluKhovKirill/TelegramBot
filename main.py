@@ -94,17 +94,27 @@ def get_log(bot, update):
 def count_start(bot, update):
     get_info(update)
     text = "Переход в режим вычислителя!\nНапишите мне пример, и я его вычислю"
-    text += "\n(Не больше 1 операнда за раз!)\n(И, пожалуйста, отделяйте числа от операндов пробелами)"
+    text += "\n(Не больше 1 операнда за раз!)"
     update.message.reply_text(text, reply_markup=STOP_MARKUP)
     return 1
 
 
 def count(bot, update):
     user = get_info(update, "COUNT_REQ")['user']
-    data = update.message.text.split()
+    msg = update.message.text.replace(" ", "")
+    n = 0
+    data = ["", "", ""]
+    last_symbol = msg[0]
+    for symbol in msg:
+        if symbol.isdigit() != last_symbol.isdigit():
+            n += 1
+        data[n] += symbol
+        last_symbol = symbol
     if 'pi' in data: 
+        data[0], data[2] = "", ""
         data[1] = 'pi'
     if 'e' in data:
+        data[0], data[2] = "", ""
         data[1] = 'e'
     answer = MathExecutor(data[0], data[1], data[2]).execute()
     logging.info('COUNT_ANS TO '+user+': '+answer)

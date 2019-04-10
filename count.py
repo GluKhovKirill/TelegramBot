@@ -5,7 +5,7 @@ from decimal import Decimal
 
 
 class MathExecutor:
-    def __init__(self, first, operand, second, is_degree=True):
+    def __init__(self, first=None, operand=None, second=None, is_degree=True):
         self.error_codes = {"ERR" : "Что-то пошло не так!",
                             "NONE": "Не передан необходимый операнд",
                             "NFLT": "Операнд не является числом",
@@ -22,12 +22,14 @@ class MathExecutor:
                     "-": self.difference,
                     "*": self.multiply,
                     ":": self.division,
+                    "/": self.division,
                     "|x|": self.module,
                     "+ -": self.invert_number,
                     "pi": self.pi,
                     "e": self.e,
                     "n!": self.factorial,
                     "x^n": self.raise_to_a_power,
+                    "**": self.raise_to_a_power,
                     "2"+"sq_root"+"x": self.square_root,
                     "3"+"c_root"+"x": self.cube_root,
                     "log": self.log,
