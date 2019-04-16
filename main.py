@@ -59,7 +59,9 @@ def start(bot, update):
 def translate_start(bot, update):
     get_info(update)
     text = "Переход в режим переводчика!\nЕсли написать мне фразу на русском, я переведу "
-    text += "её на английский и наоборот.\nДля выхода используйте /stop"
+    text += "её на английский и наоборот.\nДля выхода используйте /stop\n"
+    text += '(Если Вам интересно, переведено сервисом "Яндекс.Переводчик"\n'
+    text += "https://translate.yandex.ru )."
     update.message.reply_text(text, reply_markup=STOP_MARKUP)
     return 1
 
@@ -141,10 +143,26 @@ def bash_quote(bot, update, user_data):
     pass
 
 
+def log_text(bot, update):
+    get_info(update)
+    pass
+
+
+def get_last_quotes(bot, update, user_data):
+    quotes = user_data.get('quote_ids', [])
+    if quotes:
+        answer = "Список сказанных ранее цитат (я не буду говорить тебе цитату,"
+        answer +=  "пока ее id есть в этом списке):\n"
+        answer += "\n".join(quotes)
+    else:
+        answer = "Нет цитат, которые я не буду говорить!"
+    update.message.reply_text(answer)
+    pass
+
+
 def main(token):
     updater = Updater(token)
-    dp = updater.dispatcher
-    
+    dp = updater.dispatcher  
     #Conv. handlers:
     translate_handler = ConversationHandler(
         entry_points=[CommandHandler("translate", translate_start)],
@@ -166,8 +184,10 @@ def main(token):
     dp.add_handler(CommandHandler("close", close_keyboard))
     dp.add_handler(CommandHandler("get_log", get_log))
     dp.add_handler(CommandHandler("random_quote", bash_quote, pass_user_data=True))
+    dp.add_handler(CommandHandler("get_last_quotes", get_last_quotes, pass_user_data=True))
     dp.add_handler(translate_handler)
     dp.add_handler(calc_handler)
+    dp.add_handler(MessageHandler(Filters.text, get_log))
     
     print("STARTED")
     logging.info("Bot started")
@@ -181,9 +201,10 @@ if __name__ == '__main__':
     FEATURES = ["1)Переводить фразы c русского на английский и наоборот! (/translate)",
                 "2)Считать за тебя! (/count)"]
     
-    reply_keyboard = [['/count', '/translate'],
-                      ['/start', '/close'],
-                      ["/get_log", "/random_quote"]] #Buttons    
+    reply_keyboard = [['/start', '/close'],
+                      ['/count', '/translate'],
+                      ["/random_quote", "/get_last_quotes"],
+                      ["/get_log",]] #Buttons    
     MARKUP = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=False)
     MIN_MARKUP = ReplyKeyboardMarkup([["/start"]], one_time_keyboard=False)
     STOP_MARKUP = ReplyKeyboardMarkup([["/stop"]], one_time_keyboard=False)

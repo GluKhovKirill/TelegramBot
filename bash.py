@@ -16,11 +16,15 @@ def get_quote():
         text = text[text.find("/header")+9:text.rfind("footer style")]
         text = text[text.find(">")+1:text.rfind("/div")]
         text = text[:text.rfind("<")]
-        text = text.replace('.*1em 0;">', "").replace("<' %+ '/div>.*", "")
-        text = text.replace("<' %+ 'br.?.?>", "\n").replace("&quot;", '"')
-        text = text.replace("&lt;", '<').replace("&gt;", '>')
-        text = text.replace("&#39;", "'").replace("<\' + \'br>", "\n")
+        text = text.replace('.*1em 0;">', "")
+        text = text.replace("<' %+ '/div>.*", "")
+        text = text.replace("&quot;", '"')
+        text = text.replace("<' %+ 'br.?.?>", "\n")
+        text = text.replace("&lt;", '<')
+        text = text.replace("&gt;", '>')
+        text = text.replace("&#39;", "'")
+        text = text.replace("<\' + \'br>", "\n")
         text = text.replace("<' + 'br />", "\n")
-        return text+"\n("+quote+")", quote
+        return text+"\n("+quote+"; bash.im)", quote
     except BaseException:
         return "Нет новых цитат!"
