@@ -130,6 +130,62 @@ def count_stop(bot, update):
     return ConversationHandler.END    
 
 
+def quotes_start(bot, update, user_data):
+    #ReplyKeyboardMarkup([["/stop"]], one_time_keyboard=False)
+    user_data['quote_ids'] = user_data.get('quote_ids', [])
+    get_info(update)
+    if user_data['quote_ids']:
+        text = "Переход в режим редактирование \"старых\"!\nНапишите мне id цитаты, и я её вычеркну "
+        text += "из списка \"использованных\"\n(1 id за раз!)"
+        quotes_list = [["clear_all", "/stop"]]
+        for quote in user_data['quote_ids']:
+            quotes_list.append([quote])
+        quotes_markup = ReplyKeyboardMarkup(quotes_list, one_time_keyboard=False)
+        update.message.reply_text(text, reply_markup=quotes_markup)
+    else:
+        text = "У вас нет \"старых\" цитат!"
+        update.message.reply_text(text)
+        return ConversationHandler.END  
+    return 1
+
+
+def change_quotes(bot, update, user_data):
+    user = get_info(update, "EDIT_QUOTE_REQ")['user']
+    user_data['quote_ids'] = user_data.get('quote_ids', [])
+    msg = update.message.text.strip()
+    answer = "OK"
+    if msg == "clear_all":
+        user_data['quote_ids'] = []
+        update.message.reply_text(answer)
+    elif msg in user_data['quote_ids']:
+        try:
+            user_data['quote_ids'].remove(msg)
+            quotes_list = [["clear_all", "/stop"]]
+            for quote in user_data['quote_ids']:
+                quotes_list.append([quote])
+            quotes_markup = ReplyKeyboardMarkup(quotes_list, one_time_keyboard=False)    
+            update.message.reply_text(answer, reply_markup=quotes_markup) 
+        except ValueError:
+            logging.warning("NO_QUOTE"+"|MSG:|"+msg+"|ALL:|"+str(user_data['quote_ids']))
+            answer = "Ошибочка!"
+            update.message.reply_text(answer) 
+    else:
+        answer = "Такого id в списке нет!"
+        update.message.reply_text(answer) 
+    logging.info('EDIT_QUOTE_ANS TO '+user+': '+answer)   
+    if not user_data['quote_ids']:
+        update.message.reply_text("Список пуст! Выход из режима редактирования списка \"старых\" цитат!",
+                                  reply_markup=MARKUP) 
+        return ConversationHandler.END
+    pass
+
+
+def quotes_stop(bot, update):
+    get_info(update)
+    update.message.reply_text("Выход из режима редактирования списка \"старых\" цитат!", reply_markup=MARKUP)
+    return ConversationHandler.END   
+
+
 def bash_quote(bot, update, user_data):
     user_data['quote_ids'] = user_data.get('quote_ids', [])
     user = get_info(update, "QUOTE_REQ")['user']
@@ -178,7 +234,15 @@ def main(token):
             1: [MessageHandler(Filters.text, count)]
         },
         fallbacks=[CommandHandler('stop', count_stop)]
-    )        
+    )      
+    
+    quotes_handler = ConversationHandler(
+        entry_points=[CommandHandler("change_last_quotes", quotes_start, pass_user_data=True)],
+        states={
+            1: [MessageHandler(Filters.text, change_quotes, pass_user_data=True)]
+        },
+        fallbacks=[CommandHandler('stop', quotes_stop)]
+    )      
     #Features:
     dp.add_handler(CommandHandler("start", start)) #Greeting
     dp.add_handler(CommandHandler("close", close_keyboard))
@@ -187,6 +251,7 @@ def main(token):
     dp.add_handler(CommandHandler("get_last_quotes", get_last_quotes, pass_user_data=True))
     dp.add_handler(translate_handler)
     dp.add_handler(calc_handler)
+    dp.add_handler(quotes_handler)
     dp.add_handler(MessageHandler(Filters.text, get_log))
     
     print("STARTED")
@@ -199,12 +264,13 @@ def main(token):
 if __name__ == '__main__':
     MASTERS_IDS = [403054226, 265801498]
     FEATURES = ["1)Переводить фразы c русского на английский и наоборот! (/translate)",
-                "2)Считать за тебя! (/count)"]
+                "2)Считать за тебя! (/count)",
+                "МНОГОЕ!.."]
     
     reply_keyboard = [['/start', '/close'],
                       ['/count', '/translate'],
-                      ["/random_quote", "/get_last_quotes"],
-                      ["/get_log",]] #Buttons    
+                      ["/random_quote", "/get_last_quotes", ],
+                      ["/get_log", "/change_last_quotes"]] #Buttons    
     MARKUP = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=False)
     MIN_MARKUP = ReplyKeyboardMarkup([["/start"]], one_time_keyboard=False)
     STOP_MARKUP = ReplyKeyboardMarkup([["/stop"]], one_time_keyboard=False)
