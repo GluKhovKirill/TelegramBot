@@ -21,6 +21,6 @@ def get_quote():
         text = text.replace("&lt;", '<').replace("&gt;", '>')
         text = text.replace("&#39;", "'").replace("<\' + \'br>", "\n")
         text = text.replace("<' + 'br />", "\n")
-        return text+"\n("+quote+")"
+        return text+"\n("+quote+")", quote
     except BaseException:
-        return "Цитаты кончились!"
+        return "Нет новых цитат!"

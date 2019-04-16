@@ -128,9 +128,14 @@ def count_stop(bot, update):
     return ConversationHandler.END    
 
 
-def bash_quote(bot, update):
+def bash_quote(bot, update, user_data):
+    user_data['quote_ids'] = user_data.get('quote_ids', [])
     user = get_info(update, "QUOTE_REQ")['user']
-    answer = get_quote()
+    answer, quote_id = get_quote()
+    if quote_id in user_data['quote_ids']:
+        answer = "Нет новых цитат!"
+    else:
+        user_data['quote_ids'] = user_data.get('quote_ids') + [quote_id]
     logging.info('QUOTE_ANS TO '+user+': '+answer)
     update.message.reply_text(answer)  
     pass
@@ -160,7 +165,7 @@ def main(token):
     dp.add_handler(CommandHandler("start", start)) #Greeting
     dp.add_handler(CommandHandler("close", close_keyboard))
     dp.add_handler(CommandHandler("get_log", get_log))
-    dp.add_handler(CommandHandler("random_quote", bash_quote))
+    dp.add_handler(CommandHandler("random_quote", bash_quote, pass_user_data=True))
     dp.add_handler(translate_handler)
     dp.add_handler(calc_handler)
     
