@@ -39,7 +39,13 @@ def get_info(update, data="SENT", write_log=True):
         logging.info(data)
     return ans
     
-    
+
+def write_to_log(bot, update):
+    get_info(update)
+    update.message.reply_text("Saved!")
+    pass
+
+
 def close_keyboard(bot, update):
     get_info(update)
     update.message.reply_text("Ok", reply_markup=MIN_MARKUP)
@@ -252,7 +258,7 @@ def main(token):
     dp.add_handler(translate_handler)
     dp.add_handler(calc_handler)
     dp.add_handler(quotes_handler)
-    dp.add_handler(MessageHandler(Filters.text, get_log))
+    dp.add_handler(MessageHandler(Filters.text, write_to_log))
     
     print("STARTED")
     logging.info("Bot started")
