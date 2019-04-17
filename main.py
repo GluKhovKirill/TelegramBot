@@ -102,7 +102,7 @@ def get_log(bot, update):
 def count_start(bot, update):
     get_info(update)
     text = "Переход в режим вычислителя!\nНапишите мне пример, и я его вычислю"
-    text += "\n(Не больше 1 операнда за раз!)"
+    text += "\n(Пожалуйста, вводите не больше 1 операнда за раз!)"
     update.message.reply_text(text, reply_markup=STOP_MARKUP)
     return 1
 
