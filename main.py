@@ -95,7 +95,7 @@ def get_log(bot, update):
     else:
         bot.sendMessage(chat_id=MASTERS_IDS[0], text="Попытка получить лог!")
         bot.sendMessage(chat_id=MASTERS_IDS[0], text=user['beaut_info'])
-        update.message.reply_text("У вас нет доступа к этому!")
+        update.message.reply_text("У Вас нет доступа к этому!")
     pass
 
 
