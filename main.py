@@ -66,7 +66,7 @@ def translate_start(bot, update):
     get_info(update)
     text = "Переход в режим переводчика!\nЕсли написать мне фразу на русском, я переведу "
     text += "её на английский и наоборот.\nДля выхода используйте /stop\n"
-    text += '(Если Вам интересно, переведено сервисом "Яндекс.Переводчик"\n'
+    text += '(Переведено сервисом "Яндекс.Переводчик"\n'
     text += "https://translate.yandex.ru )."
     update.message.reply_text(text, reply_markup=STOP_MARKUP)
     return 1
