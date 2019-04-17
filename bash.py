@@ -25,6 +25,6 @@ def get_quote():
         text = text.replace("&#39;", "'")
         text = text.replace("<\' + \'br>", "\n")
         text = text.replace("<' + 'br />", "\n")
-        return text+"\n("+quote+"; bash.im)", quote
+        return text+"\n(bash.im/quote/"+quote[1:]+")", quote
     except BaseException:
         return "Нет новых цитат!"
