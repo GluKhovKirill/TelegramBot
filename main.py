@@ -270,7 +270,7 @@ def main(token):
 if __name__ == '__main__':
     MASTERS_IDS = [403054226, 265801498]
     FEATURES = ["1)Переводить фразы c русского на английский и наоборот! (/translate)",
-                "2)Считать за тебя! (/count)",
+                "2)Считать за Вас! (/count)",
                 "МНОГОЕ!.."]
     
     reply_keyboard = [['/start', '/close'],
