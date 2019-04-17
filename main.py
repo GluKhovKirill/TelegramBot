@@ -149,7 +149,7 @@ def quotes_start(bot, update, user_data):
         quotes_markup = ReplyKeyboardMarkup(quotes_list, one_time_keyboard=False)
         update.message.reply_text(text, reply_markup=quotes_markup)
     else:
-        text = "У вас нет \"старых\" цитат!"
+        text = "У Вас нет \"старых\" цитат!"
         update.message.reply_text(text)
         return ConversationHandler.END  
     return 1
