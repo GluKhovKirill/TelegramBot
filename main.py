@@ -213,7 +213,7 @@ def log_text(bot, update):
 def get_last_quotes(bot, update, user_data):
     quotes = user_data.get('quote_ids', [])
     if quotes:
-        answer = "Список сказанных ранее цитат (я не буду говорить тебе цитату,"
+        answer = "Список сказанных ранее цитат (я не буду говорить Вам цитату,"
         answer +=  "пока ее id есть в этом списке):\n"
         answer += "\n".join(quotes)
     else:
