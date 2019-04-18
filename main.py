@@ -150,12 +150,14 @@ class QuoteGrabber:
  
     def get_last_quotes(self, bot, update, user_data):
         quotes = user_data.get('quote_ids', [])
+        user = get_info(update, "LAST_QUOTES_REQ")['user']
         if quotes:
             answer = "Список сказанных ранее цитат (я не буду говорить тебе цитату,"
             answer +=  "пока ее id есть в этом списке):\n"
             answer += "\n".join(quotes)
         else:
             answer = "Нет цитат, которые я не буду говорить!"
+        logging.info('LAST_QUOTES_ANS TO '+user+': '+answer)
         update.message.reply_text(answer)
         pass
     pass
