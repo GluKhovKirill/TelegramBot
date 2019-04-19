@@ -183,7 +183,7 @@ def get_info(update, data="SENT", write_log=True):
     user = "USER: <"+user+" "+nickname
     user += " ("+str(ans['id']) + ")>"
     ans['user'] = user
-    data = user+": <"+ans['text']+">"
+    data = user+" "+data+": <"+ans['text']+">"
     ans['beaut_info'] = data
     if write_log:
         logging.info(data)
