@@ -33,6 +33,8 @@ class Translator:
         if user_data['job'] == 1:
             user = get_info(update, "TRANSLATOR_REQ")['user']
             answer = translator.analyze_and_translate(update.message.text)
+            answer += '\n(Если Вам интересно, переведено с помощью сервисов «API «Яндекс.Словарь» и "Яндекс.Переводчик"\n'
+            answer += "http://api.yandex.ru/dictionary/ https://translate.yandex.ru)."
             logging.info('TRANSLATOR_ANS TO '+user+': '+answer)
             update.message.reply_text(answer)
         else:
