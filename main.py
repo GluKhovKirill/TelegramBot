@@ -25,6 +25,8 @@ class Translator:
             text += "http://api.yandex.ru/dictionary/ https://translate.yandex.ru)."
             update.message.reply_text(text, reply_markup=STOP_MARKUP)
             return 1
+        else:
+            logging.warning("ERR"+str(user_data['job']))
    
    
     def translate(self, bot, update, user_data):
@@ -33,6 +35,8 @@ class Translator:
             answer = translator.analyze_and_translate(update.message.text)
             logging.info('TRANSLATOR_ANS TO '+user+': '+answer)
             update.message.reply_text(answer)
+        else:
+            logging.warning("ERR"+str(user_data['job']))        
             pass
    
    
@@ -54,6 +58,8 @@ class Counter:
             text += "\n(Не больше 1 операнда за раз!)"
             update.message.reply_text(text, reply_markup=STOP_MARKUP)
             return 2
+        else:
+            logging.warning("ERR"+str(user_data['job']))        
    
    
     def count(self, bot, update, user_data):
@@ -76,7 +82,9 @@ class Counter:
                 data[1] = 'e'
             answer = MathExecutor(data[0], data[1], data[2]).execute()
             logging.info('COUNT_ANS TO '+user+': '+answer)
-            update.message.reply_text(answer)    
+            update.message.reply_text(answer) 
+        else:
+            logging.warning("ERR"+str(user_data['job']))        
         pass
    
    
@@ -107,8 +115,11 @@ class QuoteGrabber:
             else:
                 text = "У вас нет \"старых\" цитат!"
                 update.message.reply_text(text)
+                user_data['job'] = None
                 return ConversationHandler.END  
             return 3
+        else:
+            logging.warning("ERR"+str(user_data['job']))        
    
    
     def change_quotes(self, bot, update, user_data):
@@ -139,11 +150,14 @@ class QuoteGrabber:
             if not user_data['quote_ids']:
                 update.message.reply_text("Список пуст! Выход из режима редактирования списка \"старых\" цитат!",
                                           reply_markup=MARKUP)
+                user_data['job'] = None
                 return ConversationHandler.END
+        else:
+            logging.warning("ERR"+str(user_data['job']))        
         pass
    
    
-    def quotes_stop(self, bot, update):
+    def quotes_stop(self, bot, update, user_data):
         user_data['job'] = None
         get_info(update)
         update.message.reply_text("Выход из режима редактирования списка \"старых\" цитат!", reply_markup=MARKUP)
@@ -152,7 +166,7 @@ class QuoteGrabber:
  
     def bash_quote(self, bot, update, user_data):
         user_data['job'] = user_data.get('job', [])
-        if user_data['job'] == 3:
+        if not user_data['job']:
             user_data['quote_ids'] = user_data.get('quote_ids', [])
             user = get_info(update, "QUOTE_REQ")['user']
             answer, quote_id = get_quote()
@@ -167,7 +181,7 @@ class QuoteGrabber:
  
     def get_last_quotes(self, bot, update, user_data):
         user_data['job'] = user_data.get('job', [])
-        if user_data['job'] == 3:        
+        if not user_data['job']:        
             quotes = user_data.get('quote_ids', [])
             user = get_info(update, "LAST_QUOTES_REQ")['user']
             if quotes:
