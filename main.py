@@ -72,10 +72,11 @@ class Counter:
             data = ["", "", ""]
             last_symbol = msg[0]
             for symbol in msg:
-                if symbol.isdigit() != last_symbol.isdigit():
+                if symbol.isdigit() != last_symbol.isdigit() and symbol != ".":
                     n += 1
                 data[n] += symbol
-                last_symbol = symbol
+                if symbol != ".":
+                    last_symbol = symbol
             if 'pi' in data:
                 data[0], data[2] = "", ""
                 data[1] = 'pi'
