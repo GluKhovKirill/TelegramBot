@@ -7,6 +7,7 @@ from keys import get_key
 from translator import YandexDictionary
 from count import MathExecutor
 from bash import get_quote
+from weather import YandexWeather
  
  
 logging.basicConfig(level=logging.INFO, filename="TelegramBot.log",
@@ -199,12 +200,19 @@ class QuoteGrabber:
     pass
  
  
-def get_info(update, data="SENT", write_log=True):
+def get_info(update, data="SENT", write_log=True, location=False):
     msg = update.message
     ans = {"chat": msg.chat,
-           "text": msg.text,
            "from": msg.from_user,
            "id": msg.from_user['id']}
+    
+    if location:
+        ans['text']=""
+        ans['location'] = msg.location
+    else:
+        ans['location']=""
+        ans['text'] = msg.text
+        
     nickname = ans['chat'].username
     ans['nickname'] = nickname
     if nickname:
@@ -265,7 +273,22 @@ def get_log(bot, update):
         update.message.reply_text("У вас нет доступа к этому!")
     pass
  
- 
+
+def get_weather(bot, update):
+    location = update.message.location
+    user = get_info(update, "WEATHER_REQ <<"+str(location)+">>", location=True)['user']
+    answer = weather.get_weather(location['longitude'], location['latitude'])
+    if answer[0]:
+        msg = "Погода в {}:\n{}\n".format(answer[0], answer[1])
+        msg += "Яндекс.Погода https://yandex.ru/pogoda/moscow"
+    else:
+        msg = "Возникла очень странная ошибка...."
+        logging.error("WEATHER_ERR TO "+user+': '+answer[1])
+    update.message.reply_text(msg)
+    logging.info("WEATHER_ANS TO "+user+': '+msg)
+    pass
+
+
 def main(token):
     updater = Updater(token)
     dp = updater.dispatcher  
@@ -306,6 +329,7 @@ def main(token):
     dp.add_handler(translate_handler)
     dp.add_handler(calc_handler)
     dp.add_handler(quotes_handler)
+    dp.add_handler(MessageHandler(Filters.location, get_weather))
     dp.add_handler(MessageHandler(Filters.text, write_to_log))
    
     print("STARTED")
@@ -314,7 +338,7 @@ def main(token):
     updater.idle()
     pass
  
- 
+
 if __name__ == '__main__':
     MASTERS_IDS = [403054226, 265801498]
     FEATURES = ["1)Переводить фразы c русского на английский и наоборот! (/translate)",
@@ -332,6 +356,7 @@ if __name__ == '__main__':
     response, key = get_key("telegram-bot")
     if response:
         translator = YandexDictionary()
+        weather = YandexWeather()
         print("My name: @SupremeSmartBot")
         main(key)
     else:
