@@ -213,13 +213,16 @@ class Weather:
     
     def get_weather_by_place(self, bot, update, args):
         place = " ".join(args)
+        if not place.replace(" ", ""):
+            update.message.reply_text("Не понимаю, где это")
+            return
         user = get_info(update, "WEATHER_REQ <<PLACE: ["+place+"]>>", location=True)['user']
         answer = self.weather.get_weather_by_place(place)
         if answer[0]:
             msg = "Погода: {}:\n{}\n".format(answer[0], answer[1])
             msg += "Яндекс.Погода https://yandex.ru/pogoda/moscow"
         else:
-            msg = "Возникла очень странная ошибка...."
+            msg = "Возникла очень странная ошибка...."+answer[1]
             logging.error("WEATHER_ERR TO "+user+': '+answer[1])
         update.message.reply_text(msg)
         logging.info("WEATHER_ANS TO "+user+': '+msg)
