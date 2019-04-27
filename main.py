@@ -218,6 +218,8 @@ class Weather:
             days = args[-1]
             if int(days) > 7:
                 days = "7"
+            if int(days) <= 0:
+                days = "1"
         
         if not place:
             place = "Москва"
@@ -375,7 +377,7 @@ if __name__ == '__main__':
     reply_keyboard = [['/start', '/close'],
                       ['/count', '/translate'],
                       ["/random_quote", "/get_last_quotes", ],
-                      ["/get_log", "/change_last_quotes"]] #Buttons    
+                      ["/get_weather", "/change_last_quotes"]] #Buttons    
     MARKUP = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=False)
     MIN_MARKUP = ReplyKeyboardMarkup([["/start"]], one_time_keyboard=False)
     STOP_MARKUP = ReplyKeyboardMarkup([["/stop"]], one_time_keyboard=False)
