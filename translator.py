@@ -11,7 +11,7 @@ class YandexDictionary:
         self.TRANSLATOR_KEY = get_key("translator")[1]
         self.LANGUAGES = {"ru": "ru-en",
                           "en": "en-ru"}
-        self.ERR_PHRASE = "Затрудняюсь     перевести"
+        self.ERR_PHRASE = "Затрудняюсь перевести"
        
     def translate_translator(self, text, lang):
         url = "https://translate.yandex.net/api/v1.5/tr.json/translate"

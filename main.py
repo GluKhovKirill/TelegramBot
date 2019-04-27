@@ -28,8 +28,7 @@ class Translator:
             return 1
         else:
             logging.warning("ERR"+str(user_data['job']))
-   
-   
+    
     def translate(self, bot, update, user_data):
         if user_data['job'] == 1:
             user = get_info(update, "TRANSLATOR_REQ")['user']
@@ -41,7 +40,6 @@ class Translator:
         else:
             logging.warning("ERR"+str(user_data['job']))        
             pass
-   
    
     def translate_stop(self, bot, update, user_data):
         user_data['job'] = None
@@ -63,7 +61,6 @@ class Counter:
             return 2
         else:
             logging.warning("ERR"+str(user_data['job']))        
-   
    
     def count(self, bot, update, user_data):
         if user_data['job'] == 2:
@@ -90,7 +87,6 @@ class Counter:
         else:
             logging.warning("ERR"+str(user_data['job']))        
         pass
-   
    
     def count_stop(self, bot, update, user_data):
         user_data['job'] = None
@@ -124,7 +120,6 @@ class QuoteGrabber:
             return 3
         else:
             logging.warning("ERR"+str(user_data['job']))        
-   
    
     def change_quotes(self, bot, update, user_data):
         if user_data['job'] == 3:
@@ -160,7 +155,6 @@ class QuoteGrabber:
             logging.warning("ERR"+str(user_data['job']))        
         pass
    
-   
     def quotes_stop(self, bot, update, user_data):
         user_data['job'] = None
         get_info(update)
@@ -182,7 +176,6 @@ class QuoteGrabber:
             update.message.reply_text(answer)  
         pass
  
- 
     def get_last_quotes(self, bot, update, user_data):
         user_data['job'] = user_data.get('job', [])
         if not user_data['job']:        
@@ -199,7 +192,41 @@ class QuoteGrabber:
             pass
     pass
  
- 
+
+class Weather:
+    def __init__(self):
+        self.weather = YandexWeather()
+        
+    def get_weather(self, bot, update):
+        location = update.message.location
+        user = get_info(update, "WEATHER_REQ <<"+str(location)+">>", location=True)['user']
+        answer = self.weather.get_weather(location['longitude'], location['latitude'])
+        if answer[0]:
+            msg = "Погода: {}:\n{}\n".format(answer[0], answer[1])
+            msg += "Яндекс.Погода https://yandex.ru/pogoda/moscow"
+        else:
+            msg = "Возникла очень странная ошибка...."
+            logging.error("WEATHER_ERR TO "+user+': '+answer[1])
+        update.message.reply_text(msg)
+        logging.info("WEATHER_ANS TO "+user+': '+msg)
+        pass    
+    
+    def get_weather_by_place(self, bot, update, args):
+        place = " ".join(args)
+        user = get_info(update, "WEATHER_REQ <<PLACE: ["+place+"]>>", location=True)['user']
+        answer = self.weather.get_weather_by_place(place)
+        if answer[0]:
+            msg = "Погода: {}:\n{}\n".format(answer[0], answer[1])
+            msg += "Яндекс.Погода https://yandex.ru/pogoda/moscow"
+        else:
+            msg = "Возникла очень странная ошибка...."
+            logging.error("WEATHER_ERR TO "+user+': '+answer[1])
+        update.message.reply_text(msg)
+        logging.info("WEATHER_ANS TO "+user+': '+msg)
+        pass
+    pass
+
+
 def get_info(update, data="SENT", write_log=True, location=False):
     msg = update.message
     ans = {"chat": msg.chat,
@@ -274,19 +301,7 @@ def get_log(bot, update):
     pass
  
 
-def get_weather(bot, update):
-    location = update.message.location
-    user = get_info(update, "WEATHER_REQ <<"+str(location)+">>", location=True)['user']
-    answer = weather.get_weather(location['longitude'], location['latitude'])
-    if answer[0]:
-        msg = "Погода в {}:\n{}\n".format(answer[0], answer[1])
-        msg += "Яндекс.Погода https://yandex.ru/pogoda/moscow"
-    else:
-        msg = "Возникла очень странная ошибка...."
-        logging.error("WEATHER_ERR TO "+user+': '+answer[1])
-    update.message.reply_text(msg)
-    logging.info("WEATHER_ANS TO "+user+': '+msg)
-    pass
+
 
 
 def main(token):
@@ -296,6 +311,7 @@ def main(token):
     translator_handler = Translator()
     counter_handler = Counter()
     quotes = QuoteGrabber()
+    weather = Weather()
     #Conv. handlers:
     translate_handler = ConversationHandler(
         entry_points=[CommandHandler("translate", translator_handler.translate_start, pass_user_data=True)],
@@ -329,7 +345,10 @@ def main(token):
     dp.add_handler(translate_handler)
     dp.add_handler(calc_handler)
     dp.add_handler(quotes_handler)
-    dp.add_handler(MessageHandler(Filters.location, get_weather))
+    #YandexWeather block
+    dp.add_handler(MessageHandler(Filters.location, weather.get_weather))
+    dp.add_handler(CommandHandler("get_weather", weather.get_weather_by_place, pass_args=True)) #12121
+    #*****************************
     dp.add_handler(MessageHandler(Filters.text, write_to_log))
    
     print("STARTED")
@@ -356,7 +375,6 @@ if __name__ == '__main__':
     response, key = get_key("telegram-bot")
     if response:
         translator = YandexDictionary()
-        weather = YandexWeather()
         print("My name: @SupremeSmartBot")
         main(key)
     else:
