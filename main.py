@@ -213,10 +213,15 @@ class Weather:
     
     def get_weather_by_place(self, bot, update, args):
         place = " ".join(args)
-        if not place.replace(" ", ""):
-            update.message.reply_text("Не понимаю, где это")
-            return
-        user = get_info(update, "WEATHER_REQ <<PLACE: ["+place+"]>>", location=True)['user']
+        days = 1
+        if args and args[-1].isdigit():
+            days = args[-1]
+            place = " ".join(args[:-1])
+        
+        if not place:
+            place = "Москва"
+            
+        user = get_info(update, "WEATHER_REQ <<PLACE: ["+place+"]>>")['user']
         answer = self.weather.get_weather_by_place(place)
         if answer[0]:
             msg = "Погода: {}:\n{}\n".format(answer[0], answer[1])
