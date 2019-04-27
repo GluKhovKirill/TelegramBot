@@ -38,39 +38,40 @@ class YandexWeather:
         #внешняя
         url = "https://api.weather.yandex.ru/v1/forecast"
         params = {'lat': lat,
-                  'lon': lon}
+                  'lon': lon,
+                  "limit": str(days)}
         try:
             response = requests.get(url, params, headers={"X-Yandex-API-Key":self.WEATHER_KEY})
             json = response.json()
             forecasts = json['forecasts']
             answer = []
-            for forecast in forecasts:
+            for forecast in forecasts[:int(days)]:
                 date = forecast['date']
                 sun = forecast['sunrise'], forecast['sunset']
                
                 parts = forecast['parts']
-                morning = [parts['morning']['temp_avg'], self.CONDITIONS[parts['morning']['condition']],
+                the_morning = [parts['morning']['temp_avg'], self.CONDITIONS[parts['morning']['condition']],
                            parts['morning']['wind_speed'], parts['morning']['humidity'], parts['morning']['pressure_mm']]
-                day = [parts['day']['temp_avg'], self.CONDITIONS[parts['day']['condition']],
+                the_day = [parts['day']['temp_avg'], self.CONDITIONS[parts['day']['condition']],
                            parts['day']['wind_speed'], parts['day']['humidity'], parts['day']['pressure_mm']]
-                evening = [parts['evening']['temp_avg'], self.CONDITIONS[parts['evening']['condition']],
+                the_evening = [parts['evening']['temp_avg'], self.CONDITIONS[parts['evening']['condition']],
                            parts['evening']['wind_speed'], parts['evening']['humidity'], parts['evening']['pressure_mm']]
                
                 day = "{}: восход в {}, закат - в {}. ".format(date, sun[0], sun[1])
-                day += "Утром: {}°C, {}, ветер: {}м/с, влажность: {}%, давление: {}мм рт. ст.; " .format(*morning)
-                day += "Днём: {}°C, {}, ветер: {}м/с, влажность: {}%, давление: {}мм рт. ст.; ".format(*day)
-                day += " Вечером: {}°C, {}, ветер: {}м/с, влажность: {}%, давление: {}мм рт. ст..".format(*evening)
+                day += "Утром: {}°C, {}, ветер: {}м/с, влажность: {}%, давление: {}мм рт. ст.; " .format(*the_morning)
+                day += "Днём: {}°C, {}, ветер: {}м/с, влажность: {}%, давление: {}мм рт. ст.; ".format(*the_day)
+                day += " Вечером: {}°C, {}, ветер: {}м/с, влажность: {}%, давление: {}мм рт. ст..".format(*the_evening)
                 answer.append(day)
-                print(day)
-               
-            #answer = "\nЯндекс.Погода {}".format(json['info']['url'])
-            return (True, json, answer)# answer) #TODO: remove
+                #print(day)
+            answer = "\n***********\n".join(answer)
+            #answer += "\nЯндекс.Погода {}".format(json['info']['url'])
+            return (True, answer)# answer) #TODO: remove
         except BaseException:
             pass
         return (False, self.ERR_PHRASE)
     
     
-    def get_weather_by_place(self, place, days):
+    def get_weather_by_place(self, place, days=1):
         #https://geocode-maps.yandex.ru/1.x/?geocode=Москва&format=json
         url = "https://geocode-maps.yandex.ru/1.x/"
         params = {"format": "json",
