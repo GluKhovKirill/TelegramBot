@@ -168,7 +168,8 @@ class QuoteGrabber:
             if quotes:
                 answer = "Список сказанных ранее цитат (я не буду говорить тебе цитату,"
                 answer +=  "пока ее id есть в этом списке):\n"
-                answer += "\n".join(quotes)
+                for quote in quotes:
+                    answer += quote+" bash.im/quote/"+quote[1:]+"\n"
             else:
                 answer = "Нет цитат, которые я не буду говорить!"
             logging.info('LAST_QUOTES_ANS TO '+user+': '+answer)
