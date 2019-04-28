@@ -6,7 +6,7 @@ import math
 class MathExecutor:
     def __init__(self, equation):
         self.error_codes = {"ERR" : "Что-то пошло не так!",
-                            "ZERODIV": "Вы попытались поделить на 0. К сожалению, это ещё не определено!",
+                            "ZERODIV": "Вы попытались поделить на 0. К сожалению, на 0 делить нельзя!",
                             "OPS": "Я не могу это выполнить..."}
         self.equation = equation
         
