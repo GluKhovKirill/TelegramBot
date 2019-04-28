@@ -56,7 +56,6 @@ class Counter:
             user_data['job'] = 2
             get_info(update)
             text = "Переход в режим вычислителя!\nНапишите мне пример, и я его вычислю"
-            text += "\n(Не больше 1 операнда за раз!)"
             update.message.reply_text(text, reply_markup=STOP_MARKUP)
             return 2
         else:
@@ -65,23 +64,8 @@ class Counter:
     def count(self, bot, update, user_data):
         if user_data['job'] == 2:
             user = get_info(update, "COUNT_REQ")['user']
-            msg = update.message.text.replace(" ", "")
-            n = 0
-            data = ["", "", ""]
-            last_symbol = msg[0]
-            for symbol in msg:
-                if symbol.isdigit() != last_symbol.isdigit() and symbol != ".":
-                    n += 1
-                data[n] += symbol
-                if symbol != ".":
-                    last_symbol = symbol
-            if 'pi' in data:
-                data[0], data[2] = "", ""
-                data[1] = 'pi'
-            if 'e' in data:
-                data[0], data[2] = "", ""
-                data[1] = 'e'
-            answer = MathExecutor(data[0], data[1], data[2]).execute()
+            msg = update.message.text
+            answer = MathExecutor(msg).execute()
             logging.info('COUNT_ANS TO '+user+': '+answer)
             update.message.reply_text(answer) 
         else:
