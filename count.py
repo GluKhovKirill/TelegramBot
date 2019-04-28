@@ -28,7 +28,6 @@ class MathExecutor:
         for symbol in equation:
             if symbol.isalpha():
                 return (False, "OPS")
-        #*************
         try:
             return (True, eval(equation, {'__builtins__':{}}))
         except ZeroDivisionError:
