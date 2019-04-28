@@ -17,8 +17,9 @@ class MathExecutor:
         if answer[0]:
             return str(answer[1])
         else:
-            return self.error_codes[answer[1]]        
-    
+            return self.error_codes[answer[1]]
+        
+        
     def count(self, equation):
         if "_" in equation:
             return (False, "OPS")
