@@ -12,7 +12,7 @@ class MathExecutor:
         
         
     def execute(self):
-        # Сам исполнитель (вычислитель)
+        #Сам исполнитель(вычислитель)
         answer = self.count(self.equation)
         if answer[0]:
             return str(answer[1])
