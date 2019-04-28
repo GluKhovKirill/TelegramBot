@@ -33,7 +33,8 @@ class YandexWeather:
         else:
             print("WEATHER: KEY ERR!!")
             return "ERR"
-       
+        
+        
     def get_weather(self, lon, lat, days=1):
         #внешняя
         url = "https://api.weather.yandex.ru/v1/forecast"
@@ -48,7 +49,6 @@ class YandexWeather:
             for forecast in forecasts[:int(days)]:
                 date = forecast['date']
                 sun = forecast['sunrise'], forecast['sunset']
-               
                 parts = forecast['parts']
                 the_morning = [parts['morning']['temp_avg'], self.CONDITIONS[parts['morning']['condition']],
                            parts['morning']['wind_speed'], parts['morning']['humidity'], parts['morning']['pressure_mm']]
@@ -91,6 +91,7 @@ class YandexWeather:
             pass
         return (False, self.ERR_PHRASE)
     
+    
     def get_place_name(self, lon, lat):
         url = "https://geocode-maps.yandex.ru/1.x/"
         params = {"format": "json",
@@ -105,4 +106,3 @@ class YandexWeather:
             pass
         return (False, self.ERR_PHRASE)        
     pass
-    
