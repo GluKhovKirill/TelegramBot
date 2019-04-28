@@ -257,7 +257,12 @@ def get_info(update, data="SENT", write_log=True, location=False):
  
 def write_to_log(bot, update):
     get_info(update)
-    update.message.reply_text("Saved!")
+    msg = update.message.text
+    if "ping" in msg.lower():
+        update.message.reply_text("PONG!")
+    else:
+        update.message.reply_text("Saved!")
+    
     pass
  
  
