@@ -57,15 +57,20 @@ class YandexWeather:
                 the_evening = [parts['evening']['temp_avg'], self.CONDITIONS[parts['evening']['condition']],
                            parts['evening']['wind_speed'], parts['evening']['humidity'], parts['evening']['pressure_mm']]
                
-                day = "{}: восход в {}, закат - в {}. ".format(date, sun[0], sun[1])
-                day += "Утром: {}°C, {}, ветер: {}м/с, влажность: {}%, давление: {}мм рт. ст.; " .format(*the_morning)
-                day += "Днём: {}°C, {}, ветер: {}м/с, влажность: {}%, давление: {}мм рт. ст.; ".format(*the_day)
-                day += " Вечером: {}°C, {}, ветер: {}м/с, влажность: {}%, давление: {}мм рт. ст..".format(*the_evening)
+                day = "{}: восход в {}, закат - в {}.\n".format(date, sun[0], sun[1])
+                day += "Утром: {}°C, {}, ветер: {}м/с, влажность: {}%, давление: {}мм рт. ст.;\n" .format(*the_morning)
+                day += "Днём: {}°C, {}, ветер: {}м/с, влажность: {}%, давление: {}мм рт. ст.;\n".format(*the_day)
+                day += "Вечером: {}°C, {}, ветер: {}м/с, влажность: {}%, давление: {}мм рт. ст..".format(*the_evening)
                 answer.append(day)
                 #print(day)
             answer = "\n***********\n".join(answer)
             #answer += "\nЯндекс.Погода {}".format(json['info']['url'])
-            return (True, answer)# answer) #TODO: remove
+            place = self.get_place_name(lon, lat)
+            if place[0]:
+                place = place[1]
+            else:
+                palce = "ГДЕ-ТО"
+            return (place, answer)# answer) #TODO: remove
         except BaseException:
             pass
         return (False, self.ERR_PHRASE)
@@ -85,3 +90,19 @@ class YandexWeather:
         except BaseException:
             pass
         return (False, self.ERR_PHRASE)
+    
+    def get_place_name(self, lon, lat):
+        url = "https://geocode-maps.yandex.ru/1.x/"
+        params = {"format": "json",
+                  "geocode": ",".join([str(lon), str(lat)])}
+        try:
+            response = requests.get(url, params)
+            json = response.json()['response']['GeoObjectCollection']['featureMember']
+            if json:
+                address = json[0]['GeoObject']['metaDataProperty']['GeocoderMetaData']['Address']['formatted']
+                return (True, address)
+        except BaseException:
+            pass
+        return (False, self.ERR_PHRASE)        
+    pass
+    

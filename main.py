@@ -202,7 +202,7 @@ class Weather:
         user = get_info(update, "WEATHER_REQ <<"+str(location)+">>", location=True)['user']
         answer = self.weather.get_weather(location['longitude'], location['latitude'])
         if answer[0]:
-            msg = "Погода: {}:\n{}".format(answer[0], answer[1])
+            msg = "Погода ({}):\n{}".format(answer[0], answer[1])
         else:
             msg = "Возникла очень странная ошибка...."
             logging.error("WEATHER_ERR TO "+user+': '+answer[1])
@@ -227,7 +227,7 @@ class Weather:
         user = get_info(update, "WEATHER_REQ <<PLACE: ["+place+"]>>")['user']
         answer = self.weather.get_weather_by_place(place, days)
         if answer[0]:
-            msg = "Погода: {}:\n{}".format(answer[0], answer[1])
+            msg = "Погода ({}):\n{}".format(answer[0], answer[1])
         else:
             msg = "Возникла очень странная ошибка...."+answer[1]
             logging.error("WEATHER_ERR TO "+user+': '+answer[1])
