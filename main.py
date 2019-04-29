@@ -301,9 +301,7 @@ def get_log(bot, update):
     pass
  
 
-
-
-
+#Main Block
 def main(token):
     updater = Updater(token)
     dp = updater.dispatcher  
