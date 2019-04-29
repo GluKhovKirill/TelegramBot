@@ -24,7 +24,7 @@ class MathExecutor:
         equation = equation.lower()
         if "_" in equation:
             return (False, "OPS")
-        equation = equation.replace("pi", str(math.pi))
+        equation = equation.replace("pi", str(math.pi)).replace(":", "/")
         equation = equation.replace("e", str(math.e)).replace(",",".")
         #CHECK
         for symbol in equation:
