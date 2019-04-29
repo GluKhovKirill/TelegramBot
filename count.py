@@ -21,6 +21,7 @@ class MathExecutor:
         
         
     def count(self, equation):
+        equation = equation.lower()
         if "_" in equation:
             return (False, "OPS")
         equation = equation.replace("pi", str(math.pi))
